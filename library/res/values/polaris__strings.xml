@@ -20,6 +20,6 @@
 <resources>
 
     <string name="polaris__locate_myself">Locate myself</string>
-    <string name="polaris__unable_to_locate_you">Waiting for localization data</string>
+    <string name="polaris__unable_to_locate_you">Waiting for location fix</string>
 
 </resources>

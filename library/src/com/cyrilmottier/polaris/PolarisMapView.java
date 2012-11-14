@@ -299,6 +299,7 @@ public class PolarisMapView extends MapView {
     private Annotation mCurrentLocationAnnotation;
     private String mCurrentLocationTitle;
     private String mCurrentLocationSubtitle;
+    private PolarisMyLocationOverlay.OnCurrentLocationChangedListener mOnCurrentLocationChangedListener;
 
     /**
      * Create a new {@link PolarisMapView}.
@@ -357,9 +358,8 @@ public class PolarisMapView extends MapView {
 
         if (mIsUserTrackingButtonEnabled) {
             final LayoutParams params = (LayoutParams) mUserTrackingButton.getLayoutParams();
-            final int spacing = getResources().getDimensionPixelOffset(R.dimen.polaris__spacing_normal);
-            params.x = w - spacing;
-            params.y = spacing;
+            params.x = w - getResources().getDimensionPixelOffset(R.dimen.polaris__spacing_large);
+            params.y = h - getResources().getDimensionPixelOffset(R.dimen.polaris__spacing_normal);
             // This will obviously start a new layout pass. However there is no
             // risk to fall in an infinite loop here as this code is only called
             // when the size has changed.
@@ -538,8 +538,8 @@ public class PolarisMapView extends MapView {
                             LayoutParams.WRAP_CONTENT,                       // width
                             LayoutParams.WRAP_CONTENT,                       // height
                             0,                                               // x
-                            0,                                               // y
-                            LayoutParams.TOP | MapView.LayoutParams.RIGHT)   // alignment
+                            getHeight(),                                     // y
+                            LayoutParams.BOTTOM | MapView.LayoutParams.RIGHT)   // alignment
                     );
                     //@formatter:on
                 }
@@ -562,6 +562,9 @@ public class PolarisMapView extends MapView {
                         } else {
                             mAnnotationsOverlay.addAnnotation(mCurrentLocationAnnotation);
                         }
+
+                        if(mOnCurrentLocationChangedListener != null)
+                            mOnCurrentLocationChangedListener.onCurrentLocationChanged(location);
                     }
                 });
 
@@ -621,6 +624,10 @@ public class PolarisMapView extends MapView {
      */
     public void setOnAnnotationSelectionChangedListener(OnAnnotationSelectionChangedListener listener) {
         mOnAnnotationSelectionChangedListener = listener;
+    }
+
+    public void setOnCurrentLocationChangedListener(PolarisMyLocationOverlay.OnCurrentLocationChangedListener listener) {
+        mOnCurrentLocationChangedListener = listener;
     }
 
     /**
@@ -788,6 +795,17 @@ public class PolarisMapView extends MapView {
             }
         }
     };
+
+    public void setUserTrackingButtonHidden(boolean hidden) {
+        if(mUserTrackingButton != null) {
+            mUserTrackingButton.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public void goToCurrentLocation() {
+        if(mUserTrackingButton != null)
+            mOnUserTrackingButtonClickListener.onClick(mUserTrackingButton);
+    }
 
     private final MystiqueCallback mMystiqueCallback = new MystiqueCallback() {
         @Override
