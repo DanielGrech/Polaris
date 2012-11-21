@@ -556,6 +556,8 @@ public class PolarisMapView extends MapView {
                             mAnnotationsOverlay.removeAnnotation(mCurrentLocationAnnotation);
 
                         ColorDrawable blankMarker = new ColorDrawable(Color.TRANSPARENT);
+                        blankMarker.setBounds(-10, -10, 10, 10);
+
                         mCurrentLocationAnnotation = new Annotation(p, mCurrentLocationTitle, mCurrentLocationSubtitle, blankMarker);
                         if(mAnnotationsOverlay == null) {
                             setAnnotations(Collections.singletonList(mCurrentLocationAnnotation), blankMarker);
